@@ -1,0 +1,70 @@
+# Jekyll configuration for warp-bubble-coordinate-spec
+title: "Warp Bubble Coordinate Specification"
+description: "Specification of coordinate system and symmetry assumptions for the warp-bubble metric ansatz"
+author: "Arcticoder"
+url: "https://arcticoder.github.io"
+baseurl: "/warp-bubble-coordinate-spec"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Kramdown settings for better math support
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+  input: GFM
+  hard_wrap: false
+
+# Plugin settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# GitHub Pages settings
+github: [metadata]
+
+# Exclude files from processing
+exclude:
+  - coordinate_spec.tex
+  - coordinate_spec.log
+  - scripts/
+  - requirements.txt
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - jekyll-sitemap
+
+# MathJax configuration
+mathjax:
+  config: TeX-MML-AM_CHTML
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "page"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+# Exclude files
+exclude:
+  - scripts/
+  - requirements.txt
+  - coordinate_spec.tex
+  - README.md
