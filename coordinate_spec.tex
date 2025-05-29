@@ -21,67 +21,112 @@ We adopt a standard spherical coordinate system on the background spacetime:
     \theta \in [0,\pi],\quad
     \phi \in [0,2\pi).
 \end{align*}
-Here $t$ is the time coordinate, $r$ the radial coordinate, and $(\theta,\phi)$ the usual polar and azimuthal angles.
 
 \section{Symmetry Assumptions}
-To simplify the metric ansatz for warp-bubble geometries, we impose:
 \begin{enumerate}
-  \item \textbf{Axial symmetry} about the $z$-axis: \\
-    All metric components are independent of the azimuthal angle $\phi$.
-  \item \textbf{Equatorial reflection symmetry}: \\
-    Invariance under $\theta \mapsto \pi - \theta$.
-  \item \textbf{Compact radial support}: \\
-    Nontrivial warp functions only for $r \le R$, where $R$ is the bubble radius.  Outside this region the spacetime matches the background (e.g.\ Minkowski).
+  \item \textbf{Axial symmetry} about the $z$-axis: no $\phi$–dependence.
+  \item \textbf{Equatorial reflection symmetry}: invariance under $\theta\!\mapsto\!\pi-\theta$.
+  \item \textbf{Compact support in $r$}: warp profiles $A,B,C,D$ nontrivial only for $r\le R$.
 \end{enumerate}
 
-\section{General Static, Axisymmetric Metric}
-A fully general static, axisymmetric line element in these coordinates would include off–diagonal terms and $\theta$–dependence:
-\[
-  ds^2 =
-    -\,g_{tt}(r,\theta)\,dt^2
-    +2\,g_{t\phi}(r,\theta)\,dt\,d\phi
-    +g_{rr}(r,\theta)\,dr^2
-    +2\,g_{r\theta}(r,\theta)\,dr\,d\theta
-    +g_{\theta\theta}(r,\theta)\,d\theta^2
-    +g_{\phi\phi}(r,\theta)\,d\phi^2.
-\]
-
 \section{Reduced Metric Ansatz}
-Imposing staticity, axial and reflection symmetry, and compact support in $r$, all off–diagonal pieces vanish and the remaining metric functions depend only on $r$.  We therefore arrive at:
+Imposing the above, the line element becomes
 \[
-  \boxed{
-    ds^2 = -A(r)\,dt^2
-      + B(r)\,dr^2
+  ds^2 = -A(r)\,dt^2 + B(r)\,dr^2
       + C(r)\,r^2\,d\theta^2
-      + D(r)\,r^2\sin^2\theta\,d\phi^2
-  }
+        + D(r)\,r^2\sin^2\theta\,d\phi^2,
 \]
-where
+with
 \[
-  A(r),\,B(r),\,C(r),\,D(r)
-  \;\begin{cases}
-    \equiv 1, & r > R \quad (\text{background})\\
-    \;\text{arbitrary warp–bubble profiles}, & r \le R
+  A(r),B(r),C(r),D(r) = 
+  \begin{cases}
+    1, & r>R,\\
+    \text{warp–bubble profiles}, & r\le R,
   \end{cases}
 \]
-and each profile function is smooth on $[0,R]$, with
-\[
-  A(0),B(0),C(0),D(0) \;\text{finite}, \quad
-  A(R)=B(R)=C(R)=D(R)=1.
-\]
+and boundary conditions $A(R)=B(R)=C(R)=D(R)=1$.
 
 \section{Worked Example (Sketch)}
-Starting from the general metric above:
 \begin{itemize}
-  \item \emph{Eliminate cross-terms:}
-    $\;g_{t\phi}=g_{r\theta}=0$ by staticity + symmetry.
-  \item \emph{Drop $\theta$–dependence:}
-    Functions become $g_{\mu\nu}(r)$ only.
-  \item \emph{Restrict radial support:}
-    $g_{\mu\nu}(r)=\eta_{\mu\nu}$ for $r>R$.
-  \item \emph{Rename profiles:}
-    $g_{tt}=-A(r)$, $g_{rr}=B(r)$, $g_{\theta\theta}=C(r)\,r^2$, $g_{\phi\phi}=D(r)\,r^2\sin^2\theta$.
+  \item Eliminate cross‐terms by staticity \& symmetry.
+  \item Enforce $\theta$–independence $\Rightarrow$ functions of $r$ only.
+  \item Impose $g_{\mu\nu}=\eta_{\mu\nu}$ for $r>R$.
+  \item Rename $g_{tt}=-A(r)$, $g_{rr}=B(r)$, etc.
 \end{itemize}
-Thus the simplified ansatz cleanly separates background from warp-bubble interior and makes all subsequent curvature computations depend only on four radial functions.
+
+\section{Automation Scripts}
+To generate, test and document metric ansätze for any warp–bubble profile, include a `scripts/` folder with:
+
+\begin{verbatim}
+warp-bubble-coordinate-spec/
+├── coordinate_spec.tex
+├── scripts/
+│   ├── fetch_shape.py
+│   ├── generate_ansatz.py
+│   └── requirements.txt
+└── metrics/
+    └── <generated .tex snippets>
+\end{verbatim}
+
+\subsection*{1. \texttt{fetch_shape.py}}
+\begin{itemize}
+  \item \emph{Purpose:} download shape‐profile JSON from
+    \url{https://arcticoder.github.io/warp-bubble-shape-catalog/}.
+  \item \emph{Usage:}
+    \begin{verbatim}
+    python scripts/fetch_shape.py --shape alcubierre
+    \end{verbatim}
+  \item \emph{Behavior:}
+    \begin{enumerate}
+      \item Perform HTTP GET on
+        \verb|https://arcticoder.github.io/warp-bubble-shape-catalog/data/{shape}.json|.
+      \item Validate presence of fields \texttt{f(r)}, \texttt{parameters}.
+      \item Save to \verb|scripts/shapes/{shape}.json|.
+    \end{enumerate}
+\end{itemize}
+
+\subsection*{2. \texttt{generate_ansatz.py}}
+\begin{itemize}
+  \item \emph{Purpose:} produce a LaTeX snippet defining
+    $A(r),B(r),C(r),D(r)$ from the fetched shape.
+  \item \emph{Usage:}
+    \begin{verbatim}
+    python scripts/generate_ansatz.py \
+      --shape alcubierre \
+      --template ../coordinate_spec.tex \
+      --out metrics/alcubierre_ansatz.tex
+    \end{verbatim}
+  \item \emph{Behavior:}
+    \begin{enumerate}
+      \item Load \verb|scripts/shapes/{shape}.json|.
+      \item Use Jinja2 (or simple string templates) to substitute:
+        \[
+          A(r)=1 - f(r),\quad B(r)=\frac{1}{1 - f(r)},\;\dots
+        \]
+      \item Emit a standalone TeX fragment in \verb|metrics/|.
+    \end{enumerate}
+\end{itemize}
+
+\subsection*{Dependencies \& Installation}
+Add a \texttt{scripts/requirements.txt}:
+\begin{verbatim}
+requests>=2.25
+jinja2>=3.0
+sympy>=1.8      # if you extend to symbolic curvature computation
+\end{verbatim}
+Install with:
+\begin{verbatim}
+pip install -r scripts/requirements.txt
+\end{verbatim}
+
+\noindent
+Each script implicitly references the “shape catalog” at  
+\href{https://arcticoder.github.io/warp-bubble-shape-catalog/}{https://arcticoder.github.io/warp-bubble-shape-catalog/}  
+as its single source-of-truth.  For offline work, you may instead add that repo as a git submodule:
+\begin{verbatim}
+git submodule add \
+  https://github.com/arcticoder/warp-bubble-shape-catalog \
+  scripts/warp-bubble-shape-catalog
+\end{verbatim}
 
 \end{document}
