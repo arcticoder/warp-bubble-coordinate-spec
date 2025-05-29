@@ -4,7 +4,6 @@ title: Coordinate System & Symmetry Specification for Warp-Bubble Metrics
 description: Specification of coordinate system and symmetry assumptions for the warp-bubble metric ansatz
 author: Arcticoder
 date: 2025-05-29
-mathjax: true
 ---
 
 # Coordinate Chart

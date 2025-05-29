@@ -21,50 +21,28 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
 
-# GitHub Pages settings
-github: [metadata]
+# GitHub Pages safe settings
+safe: true
+incremental: false
 
 # Exclude files from processing
 exclude:
-  - coordinate_spec.tex
-  - coordinate_spec.log
-  - scripts/
-  - requirements.txt
+  - vendor/
+  - .vendor/
+  - node_modules/
+  - .bundle/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
   - Gemfile
   - Gemfile.lock
-  - README.md
-  - jekyll-sitemap
-
-# MathJax configuration
-mathjax:
-  config: TeX-MML-AM_CHTML
-
-# Collections
-collections:
-  docs:
-    output: true
-    permalink: /:collection/:name/
-
-# Defaults
-defaults:
-  - scope:
-      path: ""
-      type: "posts"
-    values:
-      layout: "post"
-  - scope:
-      path: ""
-      type: "docs"
-    values:
-      layout: "page"
-  - scope:
-      path: ""
-    values:
-      layout: "default"
-
-# Exclude files
-exclude:
+  - coordinate_spec.tex
+  - coordinate_spec.log
+  - coordinate_spec.aux
+  - coordinate_spec.out
+  - coordinate_spec.pdf
   - scripts/
   - requirements.txt
-  - coordinate_spec.tex
   - README.md
+  - .git/
+  - .gitignore
