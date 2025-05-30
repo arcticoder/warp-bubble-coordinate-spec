@@ -70,18 +70,25 @@ warp-bubble-coordinate-spec/
 
 \subsection*{1. \texttt{fetch_shape.py}}
 \begin{itemize}
-  \item \emph{Purpose:} download shape‐profile JSON from
-    \url{https://arcticoder.github.io/warp-bubble-shape-catalog/}.
+  \item \emph{Purpose:} download shape‐profile data from
+    \url{https://arcticoder.github.io/warp-bubble-shape-catalog/} and convert to JSON.
+  \item \emph{Data Sources:}
+    \begin{itemize}
+      \item Primary: NPZ format (higher precision) from\\
+        \verb|https://github.com/arcticoder/warp-bubble-shape-catalog/raw/refs/heads/main/data/profiles.npz|
+      \item Fallback: CSV format from\\
+        \verb|https://raw.githubusercontent.com/arcticoder/warp-bubble-shape-catalog/refs/heads/main/data/profile_data.csv|
+    \end{itemize}
   \item \emph{Usage:}
     \begin{verbatim}
     python scripts/fetch_shape.py --shape alcubierre
+    python scripts/fetch_shape.py --shape natario --format csv
     \end{verbatim}
   \item \emph{Behavior:}
     \begin{enumerate}
-      \item Perform HTTP GET on
-        \verb|https://arcticoder.github.io/warp-bubble-shape-catalog/data/{shape}.json|.
-      \item Validate presence of fields \texttt{f(r)}, \texttt{parameters}.
-      \item Save to \verb|scripts/shapes/{shape}.json|.
+      \item Perform HTTP GET on the NPZ data (or CSV if specified).
+      \item Parse the data and extract the requested shape profile along with r values.
+      \item Convert to JSON format with metadata and save to \verb|scripts/shapes/{shape}.json|.
     \end{enumerate}
 \end{itemize}
 
@@ -113,6 +120,7 @@ Add a \texttt{scripts/requirements.txt}:
 requests>=2.25
 jinja2>=3.0
 sympy>=1.8      # if you extend to symbolic curvature computation
+numpy>=1.20     # for handling NPZ data format
 \end{verbatim}
 Install with:
 \begin{verbatim}
@@ -120,13 +128,67 @@ pip install -r scripts/requirements.txt
 \end{verbatim}
 
 \noindent
-Each script implicitly references the “shape catalog” at  
+Each script implicitly references the "shape catalog" at  
 \href{https://arcticoder.github.io/warp-bubble-shape-catalog/}{https://arcticoder.github.io/warp-bubble-shape-catalog/}  
-as its single source-of-truth.  For offline work, you may instead add that repo as a git submodule:
+as its single source-of-truth. The data is provided in both NPZ format (higher precision, 500 data points) and CSV format for compatibility.
+
+Available shapes include: \textbf{alcubierre}, \textbf{natario}
+
+Data sources:
+\begin{itemize}
+  \item NPZ: \verb|https://github.com/arcticoder/warp-bubble-shape-catalog/raw/refs/heads/main/data/profiles.npz|
+  \item CSV: \verb|https://raw.githubusercontent.com/arcticoder/warp-bubble-shape-catalog/refs/heads/main/data/profile_data.csv|
+\end{itemize}
+
+For offline work, you may instead add that repo as a git submodule:
 \begin{verbatim}
 git submodule add \
   https://github.com/arcticoder/warp-bubble-shape-catalog \
   scripts/warp-bubble-shape-catalog
 \end{verbatim}
+
+\section{Testing \& Validation}
+To verify the automation pipeline works correctly:
+
+\begin{enumerate}
+  \item Test data fetching:
+    \begin{verbatim}
+    python scripts/fetch_shape.py --shape alcubierre
+    \end{verbatim}
+    This should create \verb|scripts/shapes/alcubierre.json| with shape profile data.
+    
+  \item Test ansatz generation:
+    \begin{verbatim}
+    python scripts/generate_ansatz.py \
+      --shape alcubierre \
+      --out metrics/alcubierre_test.tex
+    \end{verbatim}
+    This should create a LaTeX snippet defining the metric components.
+    
+  \item Verify the output contains proper mathematical expressions:
+    \[
+      A(r) = 1 - (\text{interpolated\_alcubierre}(r)), \quad
+      B(r) = 1 / (1 - (\text{interpolated\_alcubierre}(r)))
+    \]
+\end{enumerate}
+
+The scripts automatically handle data format conversion, error checking, and fallback between NPZ and CSV sources. All generated content includes proper LaTeX formatting for mathematical expressions.
+
+\section{Documentation \& Deployment}
+This specification is available as a live website with MathJax rendering at:
+\begin{center}
+  \url{https://arcticoder.github.io/warp-bubble-coordinate-spec/}
+\end{center}
+
+The documentation is automatically built and deployed using GitHub Actions whenever changes are pushed to the main branch. The Jekyll site includes:
+
+\begin{itemize}
+  \item Mathematical equation rendering via MathJax
+  \item Responsive layout for desktop and mobile
+  \item Automatic syntax highlighting for code blocks
+  \item Integration with the warp-bubble-shape-catalog data sources
+\end{itemize}
+
+The automation pipeline ensures that both the LaTeX document and website remain synchronized with the latest shape data and computational tools.
 
 \end{document}
