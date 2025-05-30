@@ -156,7 +156,6 @@ dmypy.json
 *.fmf
 
 # LaTeX output files (comment out if you want to track PDFs)
-*.pdf
 *.dvi
 *.ps
 
