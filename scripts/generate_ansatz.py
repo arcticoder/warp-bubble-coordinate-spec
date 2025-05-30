@@ -22,13 +22,23 @@ def load_shape(shape, shapes_dir="scripts/shapes"):
 
 def render_ansatz(shape, template_path=None):
     data = load_shape(shape)
-    f_expr = data.get("f")
+    
+    # Handle both old JSON format and new CSV-derived format
+    if "f" in data:
+        f_expr = data["f"]
+    elif "f_values" in data and "r_values" in data:
+        # For CSV data, we'll use a simplified representation
+        f_expr = f"f_{shape}(r)"
+    else:
+        raise ValueError(f"Invalid shape data format for {shape}")
+    
     funcs = {
         "A": f"1 - ({f_expr})",
         "B": f"1 / (1 - ({f_expr}))",
         "C": "1",
         "D": "1"
     }
+    
     if template_path:
         with open(template_path) as tf:
             tmpl = Template(tf.read())

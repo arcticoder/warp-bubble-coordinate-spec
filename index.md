@@ -63,15 +63,19 @@ warp-bubble-coordinate-spec/
 
 ### 1. `fetch_shape.py`
 
-- **Purpose:** download shape‐profile JSON from [warp-bubble-shape-catalog](https://arcticoder.github.io/warp-bubble-shape-catalog/).
+- **Purpose:** download shape‐profile data from [warp-bubble-shape-catalog](https://arcticoder.github.io/warp-bubble-shape-catalog/) and convert to JSON.
+- **Data Sources:** 
+  - Primary: NPZ format (higher precision) from `https://github.com/arcticoder/warp-bubble-shape-catalog/raw/refs/heads/main/data/profiles.npz`
+  - Fallback: CSV format from `https://raw.githubusercontent.com/arcticoder/warp-bubble-shape-catalog/refs/heads/main/data/profile_data.csv`
 - **Usage:**
   ```bash
   python scripts/fetch_shape.py --shape alcubierre
+  python scripts/fetch_shape.py --shape natario --format csv
   ```
 - **Behavior:**
-  1. Perform HTTP GET on `https://arcticoder.github.io/warp-bubble-shape-catalog/data/{shape}.json`.
-  2. Validate presence of fields `f(r)`, `parameters`.
-  3. Save to `scripts/shapes/{shape}.json`.
+  1. Perform HTTP GET on the NPZ data (or CSV if specified).
+  2. Parse the data and extract the requested shape profile along with r values.
+  3. Convert to JSON format with metadata and save to `scripts/shapes/{shape}.json`.
 
 ### 2. `generate_ansatz.py`
 
@@ -96,6 +100,7 @@ Add a `scripts/requirements.txt`:
 requests>=2.25
 jinja2>=3.0
 sympy>=1.8      # if you extend to symbolic curvature computation
+numpy>=1.20     # for handling NPZ data format
 ```
 
 Install with:
@@ -103,7 +108,15 @@ Install with:
 pip install -r scripts/requirements.txt
 ```
 
-Each script implicitly references the "shape catalog" at [https://arcticoder.github.io/warp-bubble-shape-catalog/](https://arcticoder.github.io/warp-bubble-shape-catalog/) as its single source-of-truth. For offline work, you may instead add that repo as a git submodule:
+Each script implicitly references the "shape catalog" at [https://arcticoder.github.io/warp-bubble-shape-catalog/](https://arcticoder.github.io/warp-bubble-shape-catalog/) as its single source-of-truth. The data is provided in both NPZ format (higher precision, 500 data points) and CSV format for compatibility.
+
+Available shapes include: **alcubierre**, **natario** 
+
+Data sources:
+- NPZ: https://github.com/arcticoder/warp-bubble-shape-catalog/raw/refs/heads/main/data/profiles.npz
+- CSV: https://raw.githubusercontent.com/arcticoder/warp-bubble-shape-catalog/refs/heads/main/data/profile_data.csv
+
+For offline work, you may instead add that repo as a git submodule:
 
 ```bash
 git submodule add \

@@ -63,15 +63,19 @@ warp-bubble-coordinate-spec/
 
 ### 1. `fetch_shape.py`
 
-- **Purpose:** download shape‐profile JSON from [warp-bubble-shape-catalog](https://arcticoder.github.io/warp-bubble-shape-catalog/).
+- **Purpose:** download shape‐profile data from [warp-bubble-shape-catalog](https://arcticoder.github.io/warp-bubble-shape-catalog/) and convert to JSON.
+- **Data Sources:** 
+  - Primary: NPZ format (higher precision) from the catalog's data repository
+  - Fallback: CSV format for compatibility
 - **Usage:**
   ```bash
   python scripts/fetch_shape.py --shape alcubierre
+  python scripts/fetch_shape.py --shape natario --format csv
   ```
 - **Behavior:**
-  1. Perform HTTP GET on `https://arcticoder.github.io/warp-bubble-shape-catalog/data/{shape}.json`.
-  2. Validate presence of fields `f(r)`, `parameters`.
-  3. Save to `scripts/shapes/{shape}.json`.
+  1. Perform HTTP GET on the NPZ data (or CSV if specified).
+  2. Parse the data and extract the requested shape profile along with r values.
+  3. Convert to JSON format with metadata and save to `scripts/shapes/{shape}.json`.
 
 ### 2. `generate_ansatz.py`
 
@@ -96,6 +100,7 @@ Add a `scripts/requirements.txt`:
 requests>=2.25
 jinja2>=3.0
 sympy>=1.8      # if you extend to symbolic curvature computation
+numpy>=1.20     # for handling NPZ data format
 ```
 
 Install with:
@@ -103,70 +108,11 @@ Install with:
 pip install -r scripts/requirements.txt
 ```
 
-Each script implicitly references the "shape catalog" at [https://arcticoder.github.io/warp-bubble-shape-catalog/](https://arcticoder.github.io/warp-bubble-shape-catalog/) as its single source-of-truth. For offline work, you may instead add that repo as a git submodule:
+Each script implicitly references the "shape catalog" at [https://arcticoder.github.io/warp-bubble-shape-catalog/](https://arcticoder.github.io/warp-bubble-shape-catalog/) as its single source-of-truth. The data is provided in both NPZ format (higher precision, 500 data points) and CSV format for compatibility.
 
-```bash
-git submodule add \
-  https://github.com/arcticoder/warp-bubble-shape-catalog \
-  scripts/warp-bubble-shape-catalog
-```
+Available shapes include: **alcubierre**, **natario** 
 
-To generate, test and document metric ansätze for any warp–bubble profile, include a `scripts/` folder with:
-
-```
-warp-bubble-coordinate-spec/
-├── coordinate_spec.tex
-├── scripts/
-│   ├── fetch_shape.py
-│   ├── generate_ansatz.py
-│   └── requirements.txt
-└── metrics/
-    └── <generated .tex snippets>
-```
-
-### 1. `fetch_shape.py`
-
-- **Purpose:** download shape‐profile JSON from [warp-bubble-shape-catalog](https://arcticoder.github.io/warp-bubble-shape-catalog/).
-- **Usage:**
-  ```bash
-  python scripts/fetch_shape.py --shape alcubierre
-  ```
-- **Behavior:**
-  1. Perform HTTP GET on `https://arcticoder.github.io/warp-bubble-shape-catalog/data/{shape}.json`.
-  2. Validate presence of fields `f(r)`, `parameters`.
-  3. Save to `scripts/shapes/{shape}.json`.
-
-### 2. `generate_ansatz.py`
-
-- **Purpose:** produce a LaTeX snippet defining $A(r),B(r),C(r),D(r)$ from the fetched shape.
-- **Usage:**
-  ```bash
-  python scripts/generate_ansatz.py \
-    --shape alcubierre \
-    --template ../coordinate_spec.tex \
-    --out metrics/alcubierre_ansatz.tex
-  ```
-- **Behavior:**
-  1. Load `scripts/shapes/{shape}.json`.
-  2. Use Jinja2 (or simple string templates) to substitute:
-     $$A(r)=1 - f(r),\quad B(r)=\frac{1}{1 - f(r)},\;\dots$$
-  3. Emit a standalone TeX fragment in `metrics/`.
-
-### Dependencies & Installation
-
-Add a `scripts/requirements.txt`:
-```
-requests>=2.25
-jinja2>=3.0
-sympy>=1.8      # if you extend to symbolic curvature computation
-```
-
-Install with:
-```bash
-pip install -r scripts/requirements.txt
-```
-
-Each script implicitly references the "shape catalog" at [https://arcticoder.github.io/warp-bubble-shape-catalog/](https://arcticoder.github.io/warp-bubble-shape-catalog/) as its single source-of-truth. For offline work, you may instead add that repo as a git submodule:
+For offline work, you may instead add that repo as a git submodule:
 
 ```bash
 git submodule add \
