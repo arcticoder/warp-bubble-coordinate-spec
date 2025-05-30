@@ -59,13 +59,13 @@ To generate, test and document metric ansätze for any warp–bubble profile, in
 
 \begin{verbatim}
 warp-bubble-coordinate-spec/
-├── coordinate_spec.tex
-├── scripts/
-│   ├── fetch_shape.py
-│   ├── generate_ansatz.py
-│   └── requirements.txt
-└── metrics/
-    └── <generated .tex snippets>
+|-- coordinate_spec.tex
+|-- scripts/
+|   |-- fetch_shape.py
+|   |-- generate_ansatz.py
+|   +-- requirements.txt
++-- metrics/
+    +-- <generated .tex snippets>
 \end{verbatim}
 
 \subsection*{1. \texttt{fetch_shape.py}}
@@ -190,5 +190,32 @@ The documentation is automatically built and deployed using GitHub Actions whene
 \end{itemize}
 
 The automation pipeline ensures that both the LaTeX document and website remain synchronized with the latest shape data and computational tools.
+
+\section*{References}
+\begin{thebibliography}{9}
+
+\bibitem{Alcubierre1994}
+M.~Alcubierre,
+\emph{The Warp Drive: Hyper-fast travel within general relativity},
+Classical and Quantum Gravity \textbf{11} (1994) L73–L77.
+
+\bibitem{Natario2002}
+J.~Natário,
+\emph{Warp drive with zero expansion},
+Classical and Quantum Gravity \textbf{19} (2002) 1157–1165.
+
+\bibitem{ShapeCatalog}
+Arcticoder,
+\emph{Warp Bubble Shape Catalog},
+GitHub Pages, 2025.
+\newline\url{https://arcticoder.github.io/warp-bubble-shape-catalog/}
+
+\bibitem{CoordSpecSite}
+Arcticoder,
+\emph{Warp Bubble Coordinate Spec},
+GitHub Pages, 2025.
+\newline\url{https://arcticoder.github.io/warp-bubble-coordinate-spec/}
+
+\end{thebibliography}
 
 \end{document}
