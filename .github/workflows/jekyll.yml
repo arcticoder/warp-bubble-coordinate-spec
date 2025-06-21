@@ -1,10 +1,9 @@
 name: Build and Deploy Jekyll Site
 
 on:
-  push:
-    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  disabled: true
 
 permissions:
   contents: read
