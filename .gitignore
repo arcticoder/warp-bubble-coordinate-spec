@@ -218,3 +218,5 @@ Thumbs.db
 *~
 *.tmp
 *.temp
+
+.github/instructions/copilot-instructions.md
